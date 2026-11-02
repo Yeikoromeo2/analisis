@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestión de Contactos</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <link rel="stylesheet" href="taskpane.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="titulo">Gestión de Contactos</div>
+    <button id="btnRecargar" class="icono" title="Volver a leer el libro">⟳</button>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button data-tab="contacto" class="on">Contacto</button>
+    <button data-tab="pendientes">Pendientes</button>
+    <button data-tab="verificacion">Verificación</button>
+    <button data-tab="herramientas">Herramientas</button>
+  </nav>
+  <div id="estado" class="estado">Cargando libro…</div>
+
+  <!-- CONTACTO -->
+  <section id="tab-contacto" class="tab on">
+    <div class="buscar">
+      <input id="q" type="search" placeholder="ID TRAX, RUC, razón social, contacto, celular…" autocomplete="off" />
+      <label class="check"><input type="checkbox" id="seguirSel" checked /> Seguir la celda seleccionada</label>
+    </div>
+    <ul id="resultados" class="lista"></ul>
+    <div id="ficha" hidden>
+      <div class="card">
+        <div class="ficha-head">
+          <div>
+            <div id="fNombre" class="nombre"></div>
+            <div id="fSub" class="muted small"></div>
+          </div>
+        </div>
+        <div class="tags"><span id="fCruce" class="tag"></span><span id="fCompra" class="tag"></span></div>
+        <dl class="dl">
+          <dt>Contacto</dt><dd id="fContacto"></dd>
+          <dt>Celular</dt><dd id="fCelular"></dd>
+          <dt>Correo</dt><dd id="fCorreo"></dd>
+          <dt>Ciudad</dt><dd id="fCiudad"></dd>
+          <dt>Ejecutivo</dt><dd id="fEjecutivo"></dd>
+          <dt>Registro</dt><dd id="fRegistro"></dd>
+        </dl>
+        <details id="fLineas"><summary>Compras en BASE</summary><div id="fLineasBody"></div></details>
+        <div class="acciones">
+          <button id="btnIrReg" class="btn">Ir a NUEVOS REGISTROS</button>
+          <button id="btnIrSeg" class="btn">Ir a SEGUIMIENTO</button>
+        </div>
+      </div>
+
+      <form id="formSeg" class="card naranja">
+        <div class="card-title">Seguimiento <span id="fFila" class="muted small"></span></div>
+        <label>Fecha contacto
+          <div class="fila-input"><input type="date" id="sFecha" /><button type="button" id="btnHoy" class="btn sm">Hoy</button></div>
+        </label>
+        <label>Responsable<input id="sResp" list="dlResp" autocomplete="off" /></label>
+        <label>Estado contacto<input id="sEstado" list="dlEstado" autocomplete="off" /></label>
+        <label>Próxima acción<input id="sProx" list="dlProx" autocomplete="off" /></label>
+        <label id="lblFechaProx" hidden>Fecha próxima acción<input type="date" id="sFechaProx" /></label>
+        <label>Observación<textarea id="sObs" rows="3"></textarea></label>
+        <datalist id="dlResp"></datalist><datalist id="dlEstado"></datalist><datalist id="dlProx"></datalist>
+        <div class="acciones">
+          <button type="submit" id="btnGuardar" class="btn naranja">Guardar en la fila</button>
+          <button type="button" id="btnLimpiar" class="btn">Limpiar fila</button>
+        </div>
+        <div id="sinFila" class="alerta warn" hidden>
+          Este ID no tiene fila en SEGUIMIENTO SEMANAL.
+          <button type="button" id="btnAgregarFila" class="btn sm">Agregar fila al final</button>
+        </div>
+      </form>
+    </div>
+    <p id="ayudaContacto" class="muted small">Busca un cliente o selecciona una celda de su fila en NUEVOS REGISTROS o SEGUIMIENTO SEMANAL. El panel escribe en la fila correcta de SEGUIMIENTO SEMANAL según el ID TRAX.</p>
+  </section>
+
+  <!-- PENDIENTES -->
+  <section id="tab-pendientes" class="tab">
+    <div class="filtros">
+      <select id="pMes"><option value="">Todos los meses</option></select>
+      <select id="pCompro"><option value="">Compraron y no</option><option value="si">Solo compraron</option><option value="no">No compraron</option></select>
+    </div>
+    <div id="pResumen" class="muted small"></div>
+    <ul id="pLista" class="lista"></ul>
+  </section>
+
+  <!-- VERIFICACIÓN -->
+  <section id="tab-verificacion" class="tab">
+    <p class="muted small">Controles por pestaña. Toca un control para ver las filas y saltar a ellas.</p>
+    <div id="vLista"></div>
+  </section>
+
+  <!-- HERRAMIENTAS -->
+  <section id="tab-herramientas" class="tab">
+    <div class="card">
+      <div class="card-title">Actualizar compras y cruce</div>
+      <p class="small muted">Escribe en NUEVOS REGISTROS las fórmulas de <b>COMPRAS EN EL AÑO</b> y <b>CRUCE BASE</b> para todas las filas. Busca por ID, luego por ID+CSP (y suma ambas líneas) y por último por razón social única.</p>
+      <button id="btnCruce" class="btn primary">Actualizar fórmulas</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Reparar vínculos a otro archivo</div>
+      <p class="small muted">Cambia las fórmulas que apuntan a otro libro (p. ej. <code>[analisis.xlsx]</code>) para que usen las pestañas de este mismo libro.</p>
+      <div id="hVinculos" class="small"></div>
+      <button id="btnVinculos" class="btn primary">Buscar y reparar</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Listas desplegables</div>
+      <p class="small muted">Una opción por línea. Se guardan dentro del libro y se aplican como lista en SEGUIMIENTO SEMANAL.</p>
+      <label>Responsables<textarea id="lResp" rows="3"></textarea></label>
+      <label>Estados de contacto<textarea id="lEstado" rows="5"></textarea></label>
+      <label>Próximas acciones<textarea id="lProx" rows="4"></textarea></label>
+      <div class="acciones">
+        <button id="btnGuardarListas" class="btn">Guardar listas</button>
+        <button id="btnAplicarListas" class="btn primary">Aplicar en la hoja</button>
+      </div>
+    </div>
+    <p class="small muted">Versión 1.0 · <a id="lnkApp" href="/" target="_blank">Abrir la app web</a></p>
+  </section>
+
+  <script src="logica.js"></script>
+  <script src="taskpane.js"></script>
+</body>
+</html>

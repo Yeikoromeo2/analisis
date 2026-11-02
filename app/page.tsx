@@ -1,10 +1,13 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { q, one } from '@/lib/db';
 import { money, int, pct, fecha } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Panel() {
+  // Sin base de datos configurada solo funciona el complemento de Excel.
+  if (!process.env.DATABASE_URL) redirect('/instalar');
   const k = await one<any>(`
     SELECT count(*)::int registros,
       count(*) FILTER (WHERE compra > 0)::int compraron,

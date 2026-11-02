@@ -10,6 +10,7 @@ const LINKS = [
   ['/verificacion', 'Verificación'],
   ['/datos', 'Importar / Exportar'],
   ['/configuracion', 'Configuración'],
+  ['/instalar', 'Complemento Excel'],
 ];
 
 export default function Nav() {

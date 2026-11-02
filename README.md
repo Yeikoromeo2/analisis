@@ -36,6 +36,27 @@ Al importar la BASE, si un mes viene con `#N/A` pero el *Total general* lo inclu
 - Un celular escrito como fórmula (`=51+991843457`) se corrige a `991843457`.
 - Límite de archivo en Vercel: unos 4 MB.
 
+## Complemento de Excel (panel dentro de Excel)
+
+El panel **Gestión de Contactos** se abre en Excel desde **Inicio → Contactos** y trabaja sobre el libro abierto. No necesita base de datos.
+
+| Pestaña del panel | Qué hace |
+|---|---|
+| **Contacto** | Busca por ID TRAX, RUC, razón social, contacto o celular, o sigue la celda seleccionada. Muestra contacto, WhatsApp, correo, cruce y compra en BASE, y escribe FECHA CONTACTO, RESPONSABLE, ESTADO, PRÓXIMA ACCIÓN y OBSERVACIÓN en **la fila del cliente** en SEGUIMIENTO SEMANAL. |
+| **Pendientes** | Clientes sin FECHA CONTACTO, por mes y según si compraron. Al tocar uno, salta a su fila. |
+| **Verificación** | Controles por pestaña. Cada control muestra sus filas y permite saltar a ellas. |
+| **Herramientas** | Fórmulas de COMPRAS y CRUCE BASE (ID → ID+CSP → razón social), reparación de vínculos a otro archivo (`[analisis.xlsx]`) y listas desplegables guardadas en el libro. |
+
+Las pestañas y columnas se reconocen por los encabezados de la fila 1.
+
+**Instalación:** abre `https://TU-SITIO.vercel.app/instalar` y descarga `manifest.xml`, que se genera con la dirección de tu sitio.
+- **Excel en la web:** Inicio → Complementos → Más complementos → Mis complementos → *Cargar mi complemento*.
+- **Todo el equipo:** un administrador sube el manifiesto en admin.microsoft.com → Configuración → Aplicaciones integradas.
+
+Archivos: `public/complemento/` (panel) y `app/manifest.xml/route.ts` (manifiesto). Si usas un dominio propio, define `ADDIN_BASE_URL`.
+
+Sin `DATABASE_URL`, el sitio solo sirve el complemento y la página `/instalar`. Con `DATABASE_URL` también funciona la app web completa.
+
 ## Desplegar en Vercel
 
 1. **Sube este proyecto a GitHub** (un repositorio nuevo):
@@ -46,7 +67,7 @@ Al importar la BASE, si un mes viene con `#N/A` pero el *Total general* lo inclu
    git remote add origin https://github.com/TU_USUARIO/gestion-contactos.git && git push -u origin main
    ```
 2. En **vercel.com → Add New → Project**, importa el repositorio. Vercel detecta Next.js solo.
-3. **Base de datos**: en el proyecto de Vercel, entra a **Storage → Create → Neon (Postgres)** y conéctala al proyecto. Eso crea `DATABASE_URL` automáticamente. También sirve cualquier PostgreSQL (Supabase, etc.); en ese caso pega su cadena de conexión.
+3. **Base de datos** (opcional: solo para la app web; el complemento de Excel no la necesita): en el proyecto de Vercel, entra a **Storage → Create → Neon (Postgres)** y conéctala al proyecto. Eso crea `DATABASE_URL` automáticamente. También sirve cualquier PostgreSQL (Supabase, etc.); en ese caso pega su cadena de conexión.
 4. En **Settings → Environment Variables** agrega `APP_PASSWORD` con la contraseña del equipo.
 5. **Deploy**. Las tablas se crean solas en el primer uso.
 6. Entra a la app, ve a **Importar / Exportar** y sube tu Excel.
